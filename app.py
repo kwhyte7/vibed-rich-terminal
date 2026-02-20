@@ -25,7 +25,10 @@ def get_stats():
         # Network Usage (Cumulative counters)
         net = psutil.net_io_counters()
 
-        # Disk Usage
+        # Disk I/O Usage (Cumulative counters)
+        disk_io = psutil.disk_io_counters()
+
+        # Disk Usage (Total capacity) - Kept for potential use, but currently not pushed to frontend
         disk = psutil.disk_usage('/')
 
         # Swap Usage
@@ -56,7 +59,8 @@ def get_stats():
             'temp': temp if temp > 0 else random.randint(30, 65),
             'network_in': net.bytes_recv,
             'network_out': net.bytes_sent,
-            'disk_usage': disk.percent,
+            'disk_read': disk_io.read_bytes,
+            'disk_write': disk_io.write_bytes,
             'swap_usage': swap.percent,
             'load_avg': load[0] # Take the first element (1 minute average)
         })
@@ -70,7 +74,8 @@ def get_stats():
             'temp': random.randint(30, 65),
             'network_in': random.randint(100, 5000),
             'network_out': random.randint(100, 5000),
-            'disk_usage': random.randint(10, 90),
+            'disk_read': random.randint(0, 1000),
+            'disk_write': random.randint(0, 1000),
             'swap_usage': random.randint(0, 50),
             'load_avg': round(random.uniform(0.5, 8.0), 2)
         })
