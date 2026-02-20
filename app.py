@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 import subprocess
 import threading
 import random
+import psutil
 
 app = Flask(__name__)
 
@@ -11,25 +12,68 @@ def index():
 
 @app.route('/api/stats')
 def get_stats():
-    # Simulating system stats for the visualization
-    cpu = random.randint(10, 95)
-    ram = random.randint(20, 80)
-    temp = random.randint(30, 65)
-    net_in = random.randint(100, 5000)
-    net_out = random.randint(100, 5000)
-    disk = random.randint(10, 90)
-    swap = random.randint(0, 50)
-    load = round(random.uniform(0.5, 8.0), 2)
-    return jsonify({
-        'cpu': cpu,
-        'ram': ram,
-        'temp': temp,
-        'network_in': net_in,
-        'network_out': net_out,
-        'disk_usage': disk,
-        'swap_usage': swap,
-        'load_avg': load
-    })
+    """
+    Fetches real system statistics using psutil.
+    """
+    try:
+        # CPU Usage
+        cpu = psutil.cpu_percent(interval=1)
+
+        # RAM Usage
+        ram = psutil.virtual_memory()
+        
+        # Network Usage (Cumulative counters)
+        net = psutil.net_io_counters()
+
+        # Disk Usage
+        disk = psutil.disk_usage('/')
+
+        # Swap Usage
+        swap = psutil.swap_memory()
+
+        # Load Average
+        load = psutil.getloadavg()
+
+        # Temperature
+        # Note: Sensors are platform dependent. Fallback to a random value if not found
+        temp = 0
+        temps = psutil.sensors_temperatures()
+        if temps:
+            # Try to find a sensor with current values, usually 'coretemp' on Linux or 'coretemp'/'cpu_thermal' on Windows
+            found_temp = False
+            for sensor_group in temps.values():
+                for entry in sensor_group:
+                    if entry.current and entry.current > 0:
+                        temp = entry.current
+                        found_temp = True
+                        break
+                if found_temp:
+                    break
+        
+        return jsonify({
+            'cpu': cpu,
+            'ram': ram.percent,
+            'temp': temp if temp > 0 else random.randint(30, 65),
+            'network_in': net.bytes_recv,
+            'network_out': net.bytes_sent,
+            'disk_usage': disk.percent,
+            'swap_usage': swap.percent,
+            'load_avg': load[0] # Take the first element (1 minute average)
+        })
+
+    except Exception as e:
+        # Return mock data if psutil fails (e.g., permissions)
+        print(f"Error fetching real stats: {e}")
+        return jsonify({
+            'cpu': random.randint(10, 95),
+            'ram': random.randint(20, 80),
+            'temp': random.randint(30, 65),
+            'network_in': random.randint(100, 5000),
+            'network_out': random.randint(100, 5000),
+            'disk_usage': random.randint(10, 90),
+            'swap_usage': random.randint(0, 50),
+            'load_avg': round(random.uniform(0.5, 8.0), 2)
+        })
 
 def run_shell_command(cmd):
     """
