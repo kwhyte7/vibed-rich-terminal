@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Core Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="background-effects"></div>
+    
+    <header>
+        <h1>SYSTEM CORE <span class="status-dot"></span></h1>
+        <div class="header-stats">
+            <div class="pulse">UPTIME: <span id="uptime">00:00:00</span></div>
+        </div>
+    </header>
+
+    <main>
+        <section class="charts-container">
+            <div class="card">
+                <h2>CPU Load</h2>
+                <canvas id="cpuChart"></canvas>
+            </div>
+            <div class="card">
+                <h2>Memory Usage</h2>
+                <canvas id="ramChart"></canvas>
+            </div>
+            <div class="card">
+                <h2>Network Traffic</h2>
+                <canvas id="netChart"></canvas>
+            </div>
+            <div class="card">
+                <h2>Core Temperature</h2>
+                <canvas id="tempChart"></canvas>
+            </div>
+        </section>
+
+        <section class="terminal-container">
+            <div class="terminal-header">
+                <span>root@system-core:~</span>
+                <button id="clearBtn">CLEAR</button>
+            </div>
+            <div id="terminal-output">
+                <div class="output-line">Welcome to System Core Interface v2.0.4</div>
+                <div class="output-line">Type 'help' for available commands.</div>
+            </div>
+            <div class="terminal-input-area">
+                <span class="prompt">➜</span>
+                <input type="text" id="terminal-input" autocomplete="off" autofocus>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
