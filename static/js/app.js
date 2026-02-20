@@ -78,6 +78,75 @@ const tempChart = new Chart(tempCtx, {
     }
 });
 
+const netCtx = document.getElementById('netChart').getContext('2d');
+const netChart = new Chart(netCtx, {
+    type: 'line',
+    data: {
+        labels: Array(20).fill(''),
+        datasets: [{
+            label: 'Traffic',
+            data: Array(20).fill(0),
+            borderColor: '#ffff00',
+            backgroundColor: 'rgba(255, 255, 0, 0.1)',
+            borderWidth: 2,
+            tension: 0.1,
+            fill: true
+        }]
+    },
+    options: chartOptions
+});
+
+const diskCtx = document.getElementById('diskChart').getContext('2d');
+const diskChart = new Chart(diskCtx, {
+    type: 'bar',
+    data: {
+        labels: Array(20).fill(''),
+        datasets: [{
+            label: 'Disk %',
+            data: Array(20).fill(0),
+            backgroundColor: '#00ffff',
+            borderColor: '#00ffff',
+            borderWidth: 1
+        }]
+    },
+    options: chartOptions
+});
+
+const swapCtx = document.getElementById('swapChart').getContext('2d');
+const swapChart = new Chart(swapCtx, {
+    type: 'bar',
+    data: {
+        labels: Array(20).fill(''),
+        datasets: [{
+            label: 'Swap %',
+            data: Array(20).fill(0),
+            backgroundColor: '#ff3333',
+            borderColor: '#ff3333',
+            borderWidth: 1
+        }]
+    },
+    options: chartOptions
+});
+
+const loadCtx = document.getElementById('loadChart').getContext('2d');
+const loadChart = new Chart(loadCtx, {
+    type: 'line',
+    data: {
+        labels: Array(20).fill(''),
+        datasets: [{
+            label: 'Load',
+            data: Array(20).fill(0),
+            borderColor: '#ffffff',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointRadius: 0
+        }]
+    },
+    options: chartOptions
+});
+
 // --- Globe Setup (Three.js) ---
 function initGlobe() {
     const container = document.getElementById('globe-container');
@@ -178,6 +247,30 @@ setInterval(async () => {
         ramData.shift();
         ramData.push(data.ram);
         ramChart.update();
+
+        // Update Net
+        const netData = netChart.data.datasets[0].data;
+        netData.shift();
+        netData.push(data.network_in);
+        netChart.update();
+
+        // Update Disk
+        const diskData = diskChart.data.datasets[0].data;
+        diskData.shift();
+        diskData.push(data.disk_usage);
+        diskChart.update();
+
+        // Update Swap
+        const swapData = swapChart.data.datasets[0].data;
+        swapData.shift();
+        swapData.push(data.swap_usage);
+        swapChart.update();
+
+        // Update Load
+        const loadData = loadChart.data.datasets[0].data;
+        loadData.shift();
+        loadData.push(data.load_avg);
+        loadChart.update();
 
         // Update Temp
         tempChart.data.datasets[0].data = [data.temp, 100 - data.temp];

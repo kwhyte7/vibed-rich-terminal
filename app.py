@@ -15,12 +15,20 @@ def get_stats():
     cpu = random.randint(10, 95)
     ram = random.randint(20, 80)
     temp = random.randint(30, 65)
+    net_in = random.randint(100, 5000)
+    net_out = random.randint(100, 5000)
+    disk = random.randint(10, 90)
+    swap = random.randint(0, 50)
+    load = round(random.uniform(0.5, 8.0), 2)
     return jsonify({
         'cpu': cpu,
         'ram': ram,
         'temp': temp,
-        'network_in': random.randint(100, 5000),
-        'network_out': random.randint(100, 5000)
+        'network_in': net_in,
+        'network_out': net_out,
+        'disk_usage': disk,
+        'swap_usage': swap,
+        'load_avg': load
     })
 
 def run_shell_command(cmd):
