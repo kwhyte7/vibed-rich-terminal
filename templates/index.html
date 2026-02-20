@@ -11,64 +11,73 @@
 <body>
     <div class="background-effects"></div>
     
-    <header>
-        <h1>SYSTEM CORE <span class="status-dot"></span></h1>
-        <div class="header-stats">
-            <div class="pulse">UPTIME: <span id="uptime">00:00:00</span></div>
-        </div>
-    </header>
+    <div class="layout-container">
+        <!-- Sidebar for Stats -->
+        <aside class="sidebar" id="sidebar">
+            <button class="toggle-btn" id="toggleBtn" title="Toggle Sidebar">◀</button>
+            <div class="sidebar-content">
+                <div class="card">
+                    <h2>CPU Load</h2>
+                    <canvas id="cpuChart"></canvas>
+                </div>
+                <div class="card">
+                    <h2>Memory Usage</h2>
+                    <canvas id="ramChart"></canvas>
+                </div>
+                <div class="card">
+                    <h2>Global Network</h2>
+                    <div id="globe-container"></div>
+                </div>
+                <div class="card">
+                    <h2>Core Temperature</h2>
+                    <canvas id="tempChart"></canvas>
+                </div>
+                <div class="card">
+                    <h2>Network Traffic</h2>
+                    <canvas id="netChart"></canvas>
+                </div>
+                <div class="card">
+                    <h2>Disk I/O</h2>
+                    <canvas id="diskChart"></canvas>
+                </div>
+                <div class="card">
+                    <h2>Swap Usage</h2>
+                    <canvas id="swapChart"></canvas>
+                </div>
+                <div class="card">
+                    <h2>Load Average</h2>
+                    <canvas id="loadChart"></canvas>
+                </div>
+            </div>
+        </aside>
 
-    <main>
-        <section class="charts-container">
-            <div class="card">
-                <h2>CPU Load</h2>
-                <canvas id="cpuChart"></canvas>
-            </div>
-            <div class="card">
-                <h2>Memory Usage</h2>
-                <canvas id="ramChart"></canvas>
-            </div>
-            <div class="card">
-                <h2>Global Network</h2>
-                <div id="globe-container"></div>
-            </div>
-            <div class="card">
-                <h2>Core Temperature</h2>
-                <canvas id="tempChart"></canvas>
-            </div>
-            <div class="card">
-                <h2>Network Traffic</h2>
-                <canvas id="netChart"></canvas>
-            </div>
-            <div class="card">
-                <h2>Disk I/O</h2>
-                <canvas id="diskChart"></canvas>
-            </div>
-            <div class="card">
-                <h2>Swap Usage</h2>
-                <canvas id="swapChart"></canvas>
-            </div>
-            <div class="card">
-                <h2>Load Average</h2>
-                <canvas id="loadChart"></canvas>
-            </div>
-        </section>
+        <!-- Main Terminal Area -->
+        <main class="terminal-area">
+            <header>
+                <h1>SYSTEM CORE <span class="status-dot"></span></h1>
+                <div class="header-stats">
+                    <div class="pulse">UPTIME: <span id="uptime">00:00:00</span></div>
+                </div>
+            </header>
 
-        <section class="terminal-container">
-            <div class="terminal-header">
-                <span>root@system-core:~</span>
-                <button id="clearBtn">CLEAR</button>
-            </div>
-            <div id="terminal-output">
-                <div class="output-line">Welcome to System Core Interface v2.0.4</div>
-                <div class="output-line">Type 'help' for available commands.</div>
-            </div>
-            <div class="terminal-input-area">
-                <span class="prompt">➜</span>
-                <input type="text" id="terminal-input" autocomplete="off" autofocus>
-            </div>
-        </section>
-    </main>
+            <section class="terminal-wrapper">
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <span>root@system-core:~</span>
+                        <button id="clearBtn">CLEAR</button>
+                    </div>
+                    <div id="terminal-output">
+                        <div class="output-line">Welcome to System Core Interface v2.0.4</div>
+                        <div class="output-line">Type 'help' for available commands.</div>
+                    </div>
+                    <div class="terminal-input-area">
+                        <span class="prompt">➜</span>
+                        <input type="text" id="terminal-input" autocomplete="off" autofocus>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>

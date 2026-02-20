@@ -1,5 +1,17 @@
 const socket = new WebSocket('ws://' + window.location.host + '/ws'); // Note: WS not implemented in simple Flask, using polling for this demo
 
+// --- Sidebar Toggle Logic ---
+const toggleBtn = document.getElementById('toggleBtn');
+const sidebar = document.getElementById('sidebar');
+
+toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    // Toggle arrow icon
+    toggleBtn.innerText = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+    // Trigger window resize to fix canvas rendering inside the sidebar
+    window.dispatchEvent(new Event('resize'));
+});
+
 // --- Graph Setup ---
 const chartOptions = {
     responsive: true,
