@@ -57,24 +57,6 @@ const ramChart = new Chart(ramCtx, {
     options: chartOptions
 });
 
-const netCtx = document.getElementById('netChart').getContext('2d');
-const netChart = new Chart(netCtx, {
-    type: 'line',
-    data: {
-        labels: Array(20).fill(''),
-        datasets: [{
-            label: 'Traffic',
-            data: Array(20).fill(0),
-            borderColor: '#ffff00',
-            backgroundColor: 'rgba(255, 255, 0, 0.1)',
-            borderWidth: 2,
-            tension: 0.1,
-            fill: true
-        }]
-    },
-    options: chartOptions
-});
-
 const tempCtx = document.getElementById('tempChart').getContext('2d');
 const tempChart = new Chart(tempCtx, {
     type: 'doughnut',
@@ -95,6 +77,75 @@ const tempChart = new Chart(tempCtx, {
         }
     }
 });
+
+// --- Globe Setup (Three.js) ---
+function initGlobe() {
+    const container = document.getElementById('globe-container');
+    if (!container) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    // Create a wireframe sphere
+    const geometry = new THREE.IcosahedronGeometry(10, 2);
+    const material = new THREE.MeshBasicMaterial({ 
+        color: 0x00ffcc, 
+        wireframe: true,
+        transparent: true,
+        opacity: 0.6
+    });
+    const sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+
+    // Add some particles around the globe
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 200;
+    const posArray = new Float32Array(particlesCount * 3);
+
+    for(let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 30;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.1,
+        color: 0xff00ff,
+        transparent: true,
+        opacity: 0.8
+    });
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    camera.position.z = 20;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        sphere.rotation.y += 0.002;
+        sphere.rotation.x += 0.001;
+        
+        particlesMesh.rotation.y -= 0.001;
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+        if (container.clientWidth > 0 && container.clientHeight > 0) {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+    });
+}
+
+// Initialize Globe
+initGlobe();
 
 // --- Logic ---
 
@@ -127,12 +178,6 @@ setInterval(async () => {
         ramData.shift();
         ramData.push(data.ram);
         ramChart.update();
-
-        // Update Net
-        const netData = netChart.data.datasets[0].data;
-        netData.shift();
-        netData.push(data.network_in);
-        netChart.update();
 
         // Update Temp
         tempChart.data.datasets[0].data = [data.temp, 100 - data.temp];

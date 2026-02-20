@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
+import subprocess
+import threading
 import random
-import time
 
 app = Flask(__name__)
 
@@ -22,29 +23,33 @@ def get_stats():
         'network_out': random.randint(100, 5000)
     })
 
+def run_shell_command(cmd):
+    """
+    Executes a command in the real shell.
+    Returns the combined stdout and stderr.
+    """
+    try:
+        # Run command, capture output, use shell=True for bash interaction, timeout to prevent hanging
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
+        return result.stdout + result.stderr
+    except subprocess.TimeoutExpired:
+        return "Command timed out."
+    except Exception as e:
+        return f"Error executing command: {e}"
+
 @app.route('/api/terminal', methods=['POST'])
 def terminal_command():
     # Simulate processing a command
     data = request.json
-    command = data.get('command', '').strip().lower()
+    # Removed .lower() to allow real bash case sensitivity
+    command = data.get('command', '').strip()
     
-    response = "Command not found."
+    response = ""
     
-    if command == 'help':
-        response = "Available commands: status, clear, reboot, whoami, date"
-    elif command == 'status':
-        response = "System Operational. CPU: Nominal. Network: Secure."
-    elif command == 'clear':
-        response = ""  # Logic handled in frontend usually, but simulating here
-    elif command == 'whoami':
-        response = "root@system-core"
-    elif command == 'date':
-        response = time.strftime("%Y-%m-%d %H:%M:%S")
-    elif command == 'reboot':
-        response = "System rebooting in 3... 2... 1..."
+    if command == 'clear':
+        response = "" # Handled by frontend usually
     else:
-        if command:
-            response = f"Error: {command} is not a recognized command."
+        response = run_shell_command(command)
     
     return jsonify({'response': response})
 

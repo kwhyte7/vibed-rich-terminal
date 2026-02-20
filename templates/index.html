@@ -6,6 +6,7 @@
     <title>System Core Monitor</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
     <div class="background-effects"></div>
@@ -28,8 +29,8 @@
                 <canvas id="ramChart"></canvas>
             </div>
             <div class="card">
-                <h2>Network Traffic</h2>
-                <canvas id="netChart"></canvas>
+                <h2>Global Network</h2>
+                <div id="globe-container"></div>
             </div>
             <div class="card">
                 <h2>Core Temperature</h2>
