@@ -248,8 +248,8 @@ header .header-stats {
     margin-bottom: 1rem;
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
-    overflow: hidden;
-    height: 140px; /* Compact height for sidebar */
+    /*overflow: hidden;*/
+    min-height: 340px; /* Compact height for sidebar */
 }
 
 .card:hover {
